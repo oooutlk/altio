@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "altio",
+    "altio_test",
+]
+resolver = "2"
