@@ -103,10 +103,17 @@ pub fn define( _args: TokenStream, input: TokenStream ) -> TokenStream {
             #[cfg( feature = "reexport-stdio" )]
             pub use std::io::*;
 
+            #[cfg( feature = "altio" )]
             use once_cell ::sync::Lazy;
+
+            use std::{
+                io::{Stderr, Stdin, Stdout},
+            };
+
+            #[cfg( feature = "altio" )]
             use std::{
                 fmt::Arguments,
-                io::{Read, Result, Stderr, Stdin, Stdout},
+                io::{Read, Result},
                 ops::{Deref, DerefMut},
                 sync::{Mutex, MutexGuard},
             };
@@ -202,10 +209,12 @@ pub fn define( _args: TokenStream, input: TokenStream ) -> TokenStream {
                 pub fn is_terminal( &self ) -> bool { false }
             }
 
+            #[cfg( feature = "altio" )]
             pub struct Lines<'a> {
                 inner: MutexGuard<'a, String>,
             }
 
+            #[cfg( feature = "altio" )]
             impl<'a> Iterator for Lines<'a> {
                 type Item = String;
                 fn next( &mut self ) -> Option<String> {
