@@ -16,9 +16,11 @@
 ///
 /// ```compile_fail
 /// let _ = altio_test::io::Altin(());
+/// ```
 ///
 /// ```compile_fail
 /// let _ = altio_test::io::Altout(());
+/// ```
 ///
 /// ```compile_fail
 /// let _ = altio_test::io::Alterr(());
@@ -294,7 +296,7 @@ pub mod tests {
     }
 
     #[test]
-    fn receive() {
+    fn receive_out() {
         let _lock = Lock::new();
 
         io_print!("");
@@ -325,5 +327,27 @@ pub mod tests {
         assert_eq!( io::try_recv_err_line(), Some( "abcdefg\n".to_owned() ) );
         assert_eq!( io::recv_err_line(), "hijklmn\n" );
         assert_eq!( io::recv_err(), "opq rst\nuvw xyz" );
+    }
+
+    #[test]
+    fn receive_lines() {
+        let _lock = Lock::new();
+
+        io_print!( "abcd\nefg\nhijk\nlmn\nopq\nrst\nuvw\nxyz" );
+        assert_eq!( io::try_recv_lines(1), Some( "abcd\n".to_owned() ) );
+        assert_eq!( io::try_recv_lines(2), Some( "efg\nhijk\n".to_owned() ));
+        assert_eq!( io::try_recv_lines(3), Some( "lmn\nopq\nrst\n".to_owned() ));
+        assert_eq!( io::try_recv_lines(2), Some( "uvw\n".to_owned() ));
+    }
+
+    #[test]
+    fn receive_err_lines() {
+        let _lock = Lock::new();
+
+        io_eprint!( "abcd\nefg\nhijk\nlmn\nopq\nrst\nuvw\nxyz" );
+        assert_eq!( io::try_recv_err_lines(1), Some( "abcd\n".to_owned() ) );
+        assert_eq!( io::try_recv_err_lines(2), Some( "efg\nhijk\n".to_owned() ));
+        assert_eq!( io::try_recv_err_lines(3), Some( "lmn\nopq\nrst\n".to_owned() ));
+        assert_eq!( io::try_recv_err_lines(2), Some( "uvw\n".to_owned() ));
     }
 }
